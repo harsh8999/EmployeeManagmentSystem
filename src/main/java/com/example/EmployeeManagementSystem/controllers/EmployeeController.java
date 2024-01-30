@@ -32,7 +32,8 @@ public class EmployeeController {
         if(request == null) {
             throw new ApiException("Employee Details Not Present !!!");
         }
-        Employee savedEmployee = employeeService.addEmployee(request.getName(), Designation.valueOf(request.getDesignation()));
+
+        Employee savedEmployee = employeeService.addEmployee(request.getName(), Designation.fromValue(request.getDesignation()));
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
         
     }
@@ -56,7 +57,13 @@ public class EmployeeController {
     }
 
     @PutMapping("/employee/{id}")
-    public ResponseEntity<Employee> deleteEmployee(@PathVariable Long id, @RequestBody  Employee employee) {
+    public ResponseEntity<Employee> deleteEmployee(@PathVariable Long id, @RequestBody  ApiRequest request) {
+        // get the employee
+        Employee employee = employeeService.getEmployee(id);
+        // update
+        employee.setName(request.getName());
+        employee.setDesignation(Designation.fromValue(request.getDesignation()));
+        
         Employee updatedeEployee = employeeService.updateEmployeeDetails(id, employee);
         return new ResponseEntity<>(updatedeEployee, HttpStatus.OK);
     }
